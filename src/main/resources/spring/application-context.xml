@@ -36,6 +36,7 @@
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSource"
+          p:typeAliasesPackage="com.kdb.model"
           p:configLocation="classpath:mybatis/mybatis.xml"
           p:mapperLocations="classpath:com/kdb/mybatis/mapper/*.xml"/>
 
@@ -62,8 +63,7 @@
     </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="pc"
-                      expression="execution(public * com.kdb.service.*.*(..))"/>
+        <aop:pointcut id="pc" expression="execution(public * com.kdb.service.*.*(..))"/>
         <aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice"/>
     </aop:config>
 
