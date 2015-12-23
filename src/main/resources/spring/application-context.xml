@@ -14,34 +14,39 @@
 	http://www.springframework.org/schema/aop
     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
 
-    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <context:component-scan base-package="com.kdb"/>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-          p:driverClassName="${jdbc.driver}"
-          p:url="${jdbc.url}"
-          p:username="${jdbc.username}"
-          p:password="${jdbc.password}"
+    <context:annotation-config/>
 
-          p:maxIdle="50"
-          p:maxActive="10"
-          p:maxWait="3000"
-          p:minIdle="3"
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>${spring.conf.path}/database.properties</value>
+            </list>
+        </property>
+    </bean>
 
-          p:removeAbandoned="true"
-          p:removeAbandonedTimeout="36000"
-          p:testOnBorrow="true"
-          p:testOnReturn="true"
-          p:testWhileIdle="true"
-          p:validationQuery="select sysdate();"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialPoolSize" value="${pool.initialPoolSize}"/>
+        <property name="minPoolSize" value="${pool.minPoolSize}"/>
+        <property name="maxPoolSize" value="${pool.maxPoolSize}"/>
+        <property name="maxIdleTime" value="${pool.maxIdleTime}"/>
+        <property name="acquireIncrement" value="${pool.acquireIncrement}"/>
+    </bean>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSource"
           p:typeAliasesPackage="com.kdb.model"
-          p:configLocation="classpath:mybatis/mybatis.xml"
+          p:configLocation="classpath:mybatis/mybatis-config.xml"
           p:mapperLocations="classpath:com/kdb/mybatis/mapper/*.xml"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
-          p:basePackage="cn.com.talkweb.etl.mapper"
+          p:basePackage="com.kdb.mapper"
           p:sqlSessionFactoryBeanName="sqlSessionFactory"/>
 
     <!-- 事务 -->

@@ -1,4 +1,9 @@
 package com.kdb.mapper;
 
-public class UserMapper {
+import com.kdb.model.User;
+import org.apache.ibatis.annotations.Param;
+
+public interface UserMapper {
+
+    User findById(@Param(value = "id") Integer id);
 }
